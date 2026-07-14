@@ -198,6 +198,9 @@ collect_common() {
         echo "=== lfs df ==="
         ssh "${host}" "lfs df 2>/dev/null || echo 'N/A'"
         echo ""
+        echo "=== lfs getstripe -d /mnt/gds (테스트 디렉토리 stripe 설정) ==="
+        ssh "${host}" "lfs getstripe -d /mnt/gds 2>/dev/null && lfs getstripe -d /mnt/gds/${host} 2>/dev/null || echo 'N/A'"
+        echo ""
         echo "=== mount (lustre) ==="
         ssh "${host}" "mount | grep lustre 2>/dev/null || echo 'not mounted'"
     } > "${outdir}/lnet_lustre.txt" 2>/dev/null

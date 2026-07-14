@@ -29,32 +29,26 @@ stop_and_collect() {
     local outdir="${MONITOR_DIR}/${host}"
     mkdir -p "${outdir}"
 
-    # /tmp/mon_*.pid 파일 전체 읽어서 kill
+    # 단일 SSH 연결로: 프로세스 종료 + flush 대기 + tar 전송
+    # 여러 scp 병렬 호출 대신 tar pipe 방식으로 SSH 연결 수 최소화
     ssh "${host}" "
         for pidfile in /tmp/mon_*.pid; do
             [ -f \"\${pidfile}\" ] || continue
             pid=\$(cat \"\${pidfile}\" 2>/dev/null)
-            if [ -n \"\${pid}\" ] && kill -0 \"\${pid}\" 2>/dev/null; then
-                kill \"\${pid}\" 2>/dev/null
-            fi
+            [ -n \"\${pid}\" ] && kill \"\${pid}\" 2>/dev/null
             rm -f \"\${pidfile}\"
         done
-    " 2>/dev/null
-    log "  ${host}: 프로세스 종료"
+        sleep 2
+        files=\$(ls /tmp/mon_*.log 2>/dev/null)
+        [ -n \"\${files}\" ] && tar -cf - \${files} 2>/dev/null || true
+    " 2>/dev/null | tar -xf - -C "${outdir}" --transform 's|.*/mon_||' 2>/dev/null
 
-    # 잠시 대기 (마지막 로그 flush)
-    sleep 1
+    local count
+    count=$(ls "${outdir}"/*.log 2>/dev/null | wc -l)
+    log "  ${host}: ${count}개 파일 수집 완료"
 
-    # 로그 수집 (/tmp/mon_*.log → monitor_dir/<hostname>/)
-    ssh "${host}" "ls /tmp/mon_*.log 2>/dev/null" 2>/dev/null \
-    | while read -r remote_log; do
-        fname=$(basename "${remote_log}")
-        # mon_<type>.log → <type>.log
-        local_name="${fname#mon_}"
-        scp -q "${host}:${remote_log}" "${outdir}/${local_name}" 2>/dev/null \
-            && ssh "${host}" "rm -f ${remote_log}" 2>/dev/null \
-            && log "  ${host}: ${local_name} 수집 완료"
-    done
+    # 원격 로그 파일 정리
+    ssh "${host}" "rm -f /tmp/mon_*.log" 2>/dev/null
 }
 
 # ─────────────────────────────────────────

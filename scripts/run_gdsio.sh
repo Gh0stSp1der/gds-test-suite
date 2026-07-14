@@ -99,7 +99,7 @@ cleanup() {
     wait
 
     # 모니터링 종료
-    bash "${MON_DIR}/stop_mon.sh" 2>/dev/null
+    bash "${MON_DIR}/stop_mon.sh" "${MONITOR_DIR}" 2>/dev/null
 
     # 로컬 백그라운드 프로세스 종료
     for pid in "${BGPIDS[@]}"; do
@@ -172,7 +172,7 @@ done
 # 모니터링 종료
 # ─────────────────────────────────────────
 log "[MON] 모니터링 종료"
-bash "${MON_DIR}/stop_mon.sh"
+bash "${MON_DIR}/stop_mon.sh" "${MONITOR_DIR}"
 
 # ─────────────────────────────────────────
 # throughput 취합

@@ -11,7 +11,10 @@ fi
 
 CONF_DIR="$(cd "$(dirname "$0")/../../conf" && pwd)"
 HOSTS_CONF="${CONF_DIR}/hosts.conf"
-IB_BW="/root/thkim/scripts/cmon/ib-bw.sh"
+# 원격 서버에 배포된 에이전트 스크립트 경로 (deploy_agents.sh로 배포)
+AGENT_REMOTE_DIR="/root/thkim/scripts"
+IB_BW="${AGENT_REMOTE_DIR}/ib-bw.sh"
+POWER_MON="${AGENT_REMOTE_DIR}/power-mon.sh"
 
 if [[ ! -f "${HOSTS_CONF}" ]]; then
     echo "ERROR: hosts.conf 없음: ${HOSTS_CONF}"; exit 1
@@ -21,6 +24,22 @@ GPU_HOSTS_ARR=($GPU_HOSTS)
 STORAGE_HOSTS_ARR=($STORAGE_HOSTS)
 
 log() { echo "[MON][$(date '+%H:%M:%S')] $*"; }
+
+# ─────────────────────────────────────────
+# 시작 전 잔여 프로세스/파일 정리
+# ─────────────────────────────────────────
+cleanup_remote() {
+    local host=$1
+    ssh "${host}" "
+        for pidfile in /tmp/mon_*.pid; do
+            [ -f \"\${pidfile}\" ] || continue
+            pid=\$(cat \"\${pidfile}\" 2>/dev/null)
+            [ -n \"\${pid}\" ] && kill \"\${pid}\" 2>/dev/null
+            rm -f \"\${pidfile}\"
+        done
+        rm -f /tmp/mon_*.log 2>/dev/null
+    " 2>/dev/null
+}
 
 # ─────────────────────────────────────────
 # 원격 프로세스 시작 헬퍼
@@ -43,9 +62,9 @@ start_remote() {
 start_gpu_mon() {
     local host=$1
 
-    # mpstat: CPU 코어별 사용률 (1초 간격)
+    # mpstat: CPU 코어별 사용률 (1초 간격, 전체 코어)
     start_remote "${host}" "mpstat" \
-        "mpstat 1"
+        "mpstat -P ALL 1"
 
     # nvidia-smi dmon: GPU SM utilization + FB memory (1초 간격)
     # 컬럼 설명 주석을 먼저 기록 후 dmon 데이터 append
@@ -77,9 +96,14 @@ HEADER
         log "  ${host}: ib-bw.sh 없음 (${IB_BW}) — 건너뜀"
     fi
 
+    # power: CPU 패키지 전력 (RAPL, 1초 간격)
+    if ssh "${host}" "test -f ${POWER_MON}" 2>/dev/null; then
+        start_remote "${host}" "power" "bash ${POWER_MON}"
+    fi
+
     # dstat: CPU/MEM/NET/DISK 종합 (1초 간격, 타임스탬프 포함)
     start_remote "${host}" "dstat" \
-        "dstat -t -c -m -n --net-packets -d --io 1"
+        "dstat -t -c --mem-adv -n -d 1"
 }
 
 # ─────────────────────────────────────────
@@ -88,9 +112,9 @@ HEADER
 start_storage_mon() {
     local host=$1
 
-    # mpstat
+    # mpstat: CPU 코어별 사용률 (1초 간격, 전체 코어)
     start_remote "${host}" "mpstat" \
-        "mpstat 1"
+        "mpstat -P ALL 1"
 
     # ib-bw.sh
     if ssh "${host}" "test -f ${IB_BW}" 2>/dev/null; then
@@ -101,7 +125,7 @@ start_storage_mon() {
 
     # dstat
     start_remote "${host}" "dstat" \
-        "dstat -t -c -m -n --net-packets -d --io 1"
+        "dstat -t -c --mem-adv -n -d 1"
 
     # zpool iostat: pool I/O 통계 (1초 간격)
     start_remote "${host}" "zpool_iostat" \
@@ -116,6 +140,11 @@ start_storage_mon() {
 # 메인
 # ─────────────────────────────────────────
 log "모니터링 시작 (출력: ${MONITOR_DIR})"
+
+ALL_HOSTS=("${GPU_HOSTS_ARR[@]}" "${STORAGE_HOSTS_ARR[@]}")
+for host in "${ALL_HOSTS[@]}"; do
+    cleanup_remote "${host}"
+done
 
 for host in "${GPU_HOSTS_ARR[@]}"; do
     log "── GPU: ${host}"
