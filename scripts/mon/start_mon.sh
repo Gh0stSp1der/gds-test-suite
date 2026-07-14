@@ -123,11 +123,6 @@ start_storage_mon() {
         log "  ${host}: ib-bw.sh 없음 — 건너뜀"
     fi
 
-    # power: CPU 패키지 전력 (RAPL)
-    if ssh "${host}" "test -f ${POWER_MON}" 2>/dev/null; then
-        start_remote "${host}" "power" "bash ${POWER_MON}"
-    fi
-
     # dstat
     start_remote "${host}" "dstat" \
         "dstat -t -c --mem-adv -n -d 1"
