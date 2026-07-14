@@ -20,7 +20,7 @@ CONF_DIR="${SCRIPT_DIR}/../conf"
 HOSTS_CONF="${CONF_DIR}/hosts.conf"
 MON_DIR="${SCRIPT_DIR}/mon"
 GDSIO="/usr/local/cuda-12.9/gds/tools/gdsio"
-FILE_BASE="/mnt"
+FILE_BASE="/mnt/gds"
 
 # ─────────────────────────────────────────
 # 기본값 변수 (run_tests.sh에서도 일관되게 사용)

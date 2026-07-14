@@ -31,7 +31,7 @@ GDSIO="/usr/local/cuda-12.9/gds/tools/gdsio"
 FILE_SIZE="8G"
 BS="16M"
 NUM_FILES=256          # gdsio.0 ~ gdsio.255
-MOUNT_BASE="/mnt"
+MOUNT_BASE="/mnt/gds"
 
 # ─────────────────────────────────────────
 # hosts.conf 로드 (없으면 --nodes 필수)
