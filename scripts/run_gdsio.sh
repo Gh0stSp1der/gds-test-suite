@@ -28,6 +28,7 @@ FILE_BASE="/mnt/gds"
 DEFAULT_BS="8M"
 DEFAULT_THREADS=256
 DEFAULT_DURATION=120
+DEFAULT_FILE_SIZE="8G"   # create_files.sh FILE_SIZE와 일치시켜야 함
 
 # NUMA 바인딩: H100 NVL / A100 모두 NUMA 1에 GPU와 NIC이 위치
 # numactl --cpunodebind=1 --membind=1 로 CPU/메모리를 NUMA 1에 고정
@@ -47,21 +48,22 @@ STORAGE_HOSTS_ARR=($STORAGE_HOSTS)
 # 인자 파싱
 # ─────────────────────────────────────────
 OUTDIR="" XFERTYPE="" IOTYPE=""
-BS="${DEFAULT_BS}" THREADS="${DEFAULT_THREADS}" DURATION="${DEFAULT_DURATION}"
+BS="${DEFAULT_BS}" THREADS="${DEFAULT_THREADS}" DURATION="${DEFAULT_DURATION}" FILE_SIZE="${DEFAULT_FILE_SIZE}"
 
 usage() {
     grep '^#' "$0" | grep -v '^#!/' | sed 's/^# \?//'; exit 0
 }
 
-while getopts "d:x:I:b:w:T:h" opt; do
+while getopts "d:x:I:b:w:T:s:h" opt; do
     case "${opt}" in
-        d) OUTDIR="$OPTARG"    ;;
-        x) XFERTYPE="$OPTARG"  ;;
-        I) IOTYPE="$OPTARG"    ;;
-        b) BS="$OPTARG"        ;;
-        w) THREADS="$OPTARG"   ;;
-        T) DURATION="$OPTARG"  ;;
-        h) usage               ;;
+        d) OUTDIR="$OPTARG"     ;;
+        x) XFERTYPE="$OPTARG"   ;;
+        I) IOTYPE="$OPTARG"     ;;
+        b) BS="$OPTARG"         ;;
+        w) THREADS="$OPTARG"    ;;
+        T) DURATION="$OPTARG"   ;;
+        s) FILE_SIZE="$OPTARG"  ;;
+        h) usage                ;;
         *) echo "ERROR: -h 로 도움말 확인"; exit 1 ;;
     esac
 done
@@ -126,7 +128,7 @@ log "========================================"
 log " run_gdsio 시작"
 log " xfertype : ${XFERTYPE} (${XFER_NAME})"
 log " iotype   : ${IOTYPE} (${IO_NAME})"
-log " bs       : ${BS}  threads: ${THREADS}  duration: ${DURATION}s"
+log " bs       : ${BS}  threads: ${THREADS}  duration: ${DURATION}s  filesize: ${FILE_SIZE}"
 log " numactl  : ${NUMACTL}"
 log " nodes    : ${GPU_HOSTS_ARR[*]}"
 log " output   : ${OUTDIR}"
@@ -150,6 +152,7 @@ for host in "${GPU_HOSTS_ARR[@]}"; do
             -D ${FILE_BASE}/${host} \
             -d 0 \
             -w ${THREADS} \
+            -s ${FILE_SIZE} \
             -i ${BS} \
             -x ${XFERTYPE} \
             -I ${IOTYPE} \
