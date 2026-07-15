@@ -28,7 +28,7 @@ FILE_BASE="/mnt/gds"
 DEFAULT_BS="8M"
 DEFAULT_THREADS=256
 DEFAULT_DURATION=120
-DEFAULT_FILE_SIZE="8G"   # create_files.sh FILE_SIZE와 일치시켜야 함
+DEFAULT_FILE_SIZE="8G"   # create_files.sh FILE_SIZE와 일치시켜야 함. "" 로 설정 시 -s 옵션 생략
 
 # NUMA 바인딩: H100 NVL / A100 모두 NUMA 1에 GPU와 NIC이 위치
 # numactl --cpunodebind=1 --membind=1 로 CPU/메모리를 NUMA 1에 고정
@@ -152,7 +152,7 @@ for host in "${GPU_HOSTS_ARR[@]}"; do
             -D ${FILE_BASE}/${host} \
             -d 0 \
             -w ${THREADS} \
-            -s ${FILE_SIZE} \
+            ${FILE_SIZE:+-s ${FILE_SIZE}} \
             -i ${BS} \
             -x ${XFERTYPE} \
             -I ${IOTYPE} \

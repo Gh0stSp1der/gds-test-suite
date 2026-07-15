@@ -87,45 +87,45 @@ tlog "[9/18] READ CPU c3"
 "${RUN_GDSIO}" -d "${D}/read_xfer1_CPU/c3" -x 1 -I 0 -b ${BS} -w ${THREADS} -T ${DURATION} 2>&1 | tee -a "${LOG}"
 
 
-## ════════════════════════════════════════════
-## WRITE 테스트 (비활성화)
-## ════════════════════════════════════════════
-#
-## ────────────────────────────────────────────
-## WRITE | GDS (xfertype=0) | 3회
-## ────────────────────────────────────────────
-# tlog "[10/18] WRITE GDS c1"
-# "${RUN_GDSIO}" -d "${D}/write_xfer0_GDS/c1" -x 0 -I 1 -b ${BS} -w ${THREADS} -T ${DURATION} 2>&1 | tee -a "${LOG}"
-#
-# tlog "[11/18] WRITE GDS c2"
-# "${RUN_GDSIO}" -d "${D}/write_xfer0_GDS/c2" -x 0 -I 1 -b ${BS} -w ${THREADS} -T ${DURATION} 2>&1 | tee -a "${LOG}"
-#
-# tlog "[12/18] WRITE GDS c3"
-# "${RUN_GDSIO}" -d "${D}/write_xfer0_GDS/c3" -x 0 -I 1 -b ${BS} -w ${THREADS} -T ${DURATION} 2>&1 | tee -a "${LOG}"
-#
-## ────────────────────────────────────────────
-## WRITE | CPU_GPU (xfertype=2) | 3회
-## ────────────────────────────────────────────
-# tlog "[13/18] WRITE CPU_GPU c1"
-# "${RUN_GDSIO}" -d "${D}/write_xfer2_CPU_GPU/c1" -x 2 -I 1 -b ${BS} -w ${THREADS} -T ${DURATION} 2>&1 | tee -a "${LOG}"
-#
-# tlog "[14/18] WRITE CPU_GPU c2"
-# "${RUN_GDSIO}" -d "${D}/write_xfer2_CPU_GPU/c2" -x 2 -I 1 -b ${BS} -w ${THREADS} -T ${DURATION} 2>&1 | tee -a "${LOG}"
-#
-# tlog "[15/18] WRITE CPU_GPU c3"
-# "${RUN_GDSIO}" -d "${D}/write_xfer2_CPU_GPU/c3" -x 2 -I 1 -b ${BS} -w ${THREADS} -T ${DURATION} 2>&1 | tee -a "${LOG}"
-#
-## ────────────────────────────────────────────
-## WRITE | CPU (xfertype=1) | 3회
-## ────────────────────────────────────────────
-# tlog "[16/18] WRITE CPU c1"
-# "${RUN_GDSIO}" -d "${D}/write_xfer1_CPU/c1" -x 1 -I 1 -b ${BS} -w ${THREADS} -T ${DURATION} 2>&1 | tee -a "${LOG}"
-#
-# tlog "[17/18] WRITE CPU c2"
-# "${RUN_GDSIO}" -d "${D}/write_xfer1_CPU/c2" -x 1 -I 1 -b ${BS} -w ${THREADS} -T ${DURATION} 2>&1 | tee -a "${LOG}"
-#
-# tlog "[18/18] WRITE CPU c3"
-# "${RUN_GDSIO}" -d "${D}/write_xfer1_CPU/c3" -x 1 -I 1 -b ${BS} -w ${THREADS} -T ${DURATION} 2>&1 | tee -a "${LOG}"
+# ════════════════════════════════════════════
+# WRITE 테스트 (비활성화)
+# ════════════════════════════════════════════
+
+# ────────────────────────────────────────────
+# WRITE | GDS (xfertype=0) | 3회
+# ────────────────────────────────────────────
+ tlog "[10/18] WRITE GDS c1"
+ "${RUN_GDSIO}" -d "${D}/write_xfer0_GDS/c1" -x 0 -I 1 -b ${BS} -w ${THREADS} -T ${DURATION} 2>&1 | tee -a "${LOG}"
+
+ tlog "[11/18] WRITE GDS c2"
+ "${RUN_GDSIO}" -d "${D}/write_xfer0_GDS/c2" -x 0 -I 1 -b ${BS} -w ${THREADS} -T ${DURATION} 2>&1 | tee -a "${LOG}"
+
+ tlog "[12/18] WRITE GDS c3"
+ "${RUN_GDSIO}" -d "${D}/write_xfer0_GDS/c3" -x 0 -I 1 -b ${BS} -w ${THREADS} -T ${DURATION} 2>&1 | tee -a "${LOG}"
+
+# ────────────────────────────────────────────
+# WRITE | CPU_GPU (xfertype=2) | 3회
+# ────────────────────────────────────────────
+ tlog "[13/18] WRITE CPU_GPU c1"
+ "${RUN_GDSIO}" -d "${D}/write_xfer2_CPU_GPU/c1" -x 2 -I 1 -b ${BS} -w ${THREADS} -T ${DURATION} 2>&1 | tee -a "${LOG}"
+
+ tlog "[14/18] WRITE CPU_GPU c2"
+ "${RUN_GDSIO}" -d "${D}/write_xfer2_CPU_GPU/c2" -x 2 -I 1 -b ${BS} -w ${THREADS} -T ${DURATION} 2>&1 | tee -a "${LOG}"
+
+ tlog "[15/18] WRITE CPU_GPU c3"
+ "${RUN_GDSIO}" -d "${D}/write_xfer2_CPU_GPU/c3" -x 2 -I 1 -b ${BS} -w ${THREADS} -T ${DURATION} 2>&1 | tee -a "${LOG}"
+
+# ────────────────────────────────────────────
+# WRITE | CPU (xfertype=1) | 3회
+# ────────────────────────────────────────────
+ tlog "[16/18] WRITE CPU c1"
+ "${RUN_GDSIO}" -d "${D}/write_xfer1_CPU/c1" -x 1 -I 1 -b ${BS} -w ${THREADS} -T ${DURATION} 2>&1 | tee -a "${LOG}"
+
+ tlog "[17/18] WRITE CPU c2"
+ "${RUN_GDSIO}" -d "${D}/write_xfer1_CPU/c2" -x 1 -I 1 -b ${BS} -w ${THREADS} -T ${DURATION} 2>&1 | tee -a "${LOG}"
+
+ tlog "[18/18] WRITE CPU c3"
+ "${RUN_GDSIO}" -d "${D}/write_xfer1_CPU/c3" -x 1 -I 1 -b ${BS} -w ${THREADS} -T ${DURATION} 2>&1 | tee -a "${LOG}"
 
 
 # ════════════════════════════════════════════
