@@ -165,6 +165,18 @@ collect_common() {
     ssh "${host}" "ibstat 2>/dev/null || echo 'ibstat not available'" \
         > "${outdir}/ibstat.txt"
 
+    # ibstatus
+    ssh "${host}" "ibstatus 2>/dev/null || echo 'ibstatus not available'" \
+        > "${outdir}/ibstatus.txt"
+
+    # ibdev2netdev
+    ssh "${host}" "ibdev2netdev 2>/dev/null || echo 'ibdev2netdev not available'" \
+        > "${outdir}/ibdev2netdev.txt"
+
+    # ip addr
+    ssh "${host}" "ip addr show 2>/dev/null" \
+        > "${outdir}/ip_addr.txt"
+
     # ko2iblnd 커널 모듈 파라미터
     {
         echo "=== /etc/modprobe.d/ko2iblnd.conf ==="

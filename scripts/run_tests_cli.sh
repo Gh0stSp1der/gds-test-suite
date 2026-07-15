@@ -17,7 +17,7 @@ COLLECT_CONFIG="${SCRIPT_DIR}/collect_config.sh"
 # ═══════════════════════════════════════════
 BS=8M
 THREADS=256
-DURATION=300
+DURATION=120
 
 # 결과 경로: 스크립트 위치 기준 상대경로
 # 압축 후 다른 위치에 풀어도 자동으로 해당 위치 기준으로 동작
