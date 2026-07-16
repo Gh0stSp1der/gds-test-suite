@@ -141,6 +141,16 @@ log "[MON] 모니터링 시작"
 bash "${MON_DIR}/start_mon.sh" "${MONITOR_DIR}"
 
 # ─────────────────────────────────────────
+# 페이지 캐시 드롭 (gdsio 시작 전)
+# ─────────────────────────────────────────
+log "[CACHE] 페이지 캐시 드롭"
+for host in "${GPU_HOSTS_ARR[@]}"; do
+    ssh "${host}" "sync; echo 3 > /proc/sys/vm/drop_caches" 2>/dev/null &
+done
+wait
+log "[CACHE] 완료"
+
+# ─────────────────────────────────────────
 # gdsio 동시 실행
 # ─────────────────────────────────────────
 log "[RUN] gdsio 실행 (${#GPU_HOSTS_ARR[@]}개 노드 동시)"
